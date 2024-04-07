@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 
 @Service
-class TransactionService @Autowired constructor(
-    private val transactionRepository: TransactionRepository) {
+class TransactionService @Autowired constructor(private val transactionRepository: TransactionRepository) {
     fun getAllTransactions(): List<Transaction> = transactionRepository.findAll()
 
     fun getTransactionById(transactionId: Long): Transaction? =
