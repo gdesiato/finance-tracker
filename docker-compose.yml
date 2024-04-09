@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_DB: financetracker
+      POSTGRES_USER: financetracker
+      POSTGRES_PASSWORD: financetracker
+    ports:
+      - "5434:5432"
+
+volumes:
+  db-data:
