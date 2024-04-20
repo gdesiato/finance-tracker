@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/users")
 class UserController(private val userService: UserService) {
 
-    
+
     @GetMapping
     fun getAllUsers(): ResponseEntity<List<User>> {
         val users = userService.findAllUsers()
