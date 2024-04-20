@@ -1,6 +1,7 @@
 package com.gdesiato.financetracker.controller
 
 import com.gdesiato.financetracker.model.User
+import com.gdesiato.financetracker.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
