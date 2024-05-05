@@ -1,7 +1,6 @@
 package com.gdesiato.financetracker.controller
 
-import com.gdesiato.financetracker.model.User
-import com.gdesiato.financetracker.repository.UserRepository
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.gdesiato.financetracker.service.UserService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +22,9 @@ class UserControllerTest {
 
     @Autowired
     private lateinit var userService: UserService
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @Test
     fun `createUser should return created user`() {
@@ -75,8 +77,37 @@ class UserControllerTest {
 
     @Test
     fun `getUserById should return not found when user does not exist`() {
-        
+
         mockMvc.perform(get("/api/user/999"))
+            .andExpect(status().isNotFound())
+    }
+
+    @Test
+    fun `updateUser should update user and return updated info when user exists`() {
+
+        val uniqueEmail = generateUniqueEmail();
+        val existingUser = userService.createUser(uniqueEmail, "password123")
+        val updatedInfo = existingUser.copy(email = "updated${existingUser.email}")
+
+        mockMvc.perform(put("/api/user/${existingUser.id}")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updatedInfo)))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(existingUser.id))
+            .andExpect(jsonPath("$.email").value(updatedInfo.email))
+    }
+
+    @Test
+    fun `updateUser should return not found when user does not exist`() {
+
+        val uniqueEmail = generateUniqueEmail();
+        val existingUser = userService.createUser(uniqueEmail, "password123")
+        val nonExistentUserId = existingUser.id + 999
+        val updateAttempt = existingUser.copy(email = "nonexistent${existingUser.email}")
+
+        mockMvc.perform(put("/api/user/$nonExistentUserId")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(updateAttempt)))
             .andExpect(status().isNotFound())
     }
 
