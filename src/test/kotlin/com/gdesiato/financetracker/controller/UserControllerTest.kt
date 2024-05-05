@@ -1,5 +1,7 @@
 package com.gdesiato.financetracker.controller
 
+import com.gdesiato.financetracker.model.User
+import com.gdesiato.financetracker.repository.UserRepository
 import com.gdesiato.financetracker.service.UserService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,8 +11,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.util.*
 
 @SpringBootTest
@@ -54,6 +55,28 @@ class UserControllerTest {
 
         // Then
         mockMvc.perform(get("/api/user/$userId"))
+            .andExpect(status().isNotFound())
+    }
+
+    @Test
+    fun `getUserById should return user when user exists`() {
+        // Given
+        val uniqueEmail = generateUniqueEmail();
+        val createdUser = userService.createUser(uniqueEmail, "password123")
+        val userId = createdUser.id
+
+        // When & Then
+        mockMvc.perform(get("/api/user/$userId"))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id").value(createdUser.id))
+            .andExpect(jsonPath("$.email").value(createdUser.email))
+    }
+
+    @Test
+    fun `getUserById should return not found when user does not exist`() {
+        
+        mockMvc.perform(get("/api/user/999"))
             .andExpect(status().isNotFound())
     }
 
