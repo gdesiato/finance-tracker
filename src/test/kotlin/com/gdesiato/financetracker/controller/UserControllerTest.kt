@@ -61,6 +61,13 @@ class UserControllerTest {
     }
 
     @Test
+    fun `deleteNonExistentUser should return not found`() {
+        mockMvc.perform(delete("/api/user/9999"))
+            .andExpect(status().isNotFound)
+            .andExpect(content().string("User not found"))
+    }
+
+    @Test
     fun `getUserById should return user when user exists`() {
         // Given
         val uniqueEmail = generateUniqueEmail();

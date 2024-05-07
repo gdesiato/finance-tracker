@@ -45,7 +45,11 @@ class UserController(private val userService: UserService) {
 
     @DeleteMapping("/{id}")
     fun deleteUser(@PathVariable id: Long): ResponseEntity<String> {
-        userService.deleteUser(id)
-        return ResponseEntity.ok().body("User deleted successfully")
+        val isDeleted = userService.deleteUser(id)
+        return if (isDeleted) {
+            ResponseEntity.ok().body("User deleted successfully")
+        } else {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found")
+        }
     }
 }

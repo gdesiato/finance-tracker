@@ -35,14 +35,12 @@ class UserService(private val userRepository: UserRepository) {
         return userRepository.save(newUser)
     }
 
-    fun deleteUser(id: Long) {
-        logger.info("Attempting to delete user with ID: $id")
-        try {
-            userRepository.deleteById(id)
-            logger.info("User with ID: $id has been successfully deleted.")
-        } catch (ex: Exception) {
-            logger.error("Failed to delete user with ID: $id", ex)
-            throw ex
+    fun deleteUser(id: Long): Boolean {
+        val user = userRepository.findById(id)
+        if (user.isPresent) {
+            userRepository.delete(user.get())
+            return true
         }
+        return false
     }
 }
