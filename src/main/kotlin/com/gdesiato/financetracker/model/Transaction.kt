@@ -6,7 +6,7 @@ import java.time.LocalDate
 @Entity
 @Table(name = "transaction_entry")
 data class Transaction(
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
     val amount: Double,
